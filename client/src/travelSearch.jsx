@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import TravelDetail from "./travelDetail";
 
 function TravelSearch() {
   const [locationDetail, setLocationDetail] = useState([]);
   const [search, setSearch] = useState("");
+  let inputMessage = search;
 
   const getLocationDetail = async () => {
     const result = await axios.get(
       `http://localhost:4001/trips?keywords=${search}`
     );
-    console.log(result.data.data);
+    console.log(search);
     setLocationDetail(result.data.data);
+  };
+
+  const handleInput = (search) => {
+    inputMessage += search + " ";
+    setSearch(inputMessage);
   };
 
   useEffect(() => {
@@ -21,7 +26,7 @@ function TravelSearch() {
     <div>
       <div className=" flex justify-center font-Kanit  items-center h-[50px]">
         <input
-          className="peer placeholder: text-center w-[1200px] border-b border-gray-400"
+          className="placeholder: text-center w-[1200px] border-b border-gray-400"
           type="text"
           placeholder="หาที่เที่ยวแล้วไปกัน ..."
           value={search}
@@ -32,47 +37,65 @@ function TravelSearch() {
       </div>
       {locationDetail.map((item, index) => {
         return (
-          <TravelDetail
-            key={index}
-            src={item.photos[0]}
-            title={item.title}
-            description={item.description}
-            url={item.url}
-            tags={item.tags}
-            imgsrc1={item.photos[1]}
-            imgsrc2={item.photos[2]}
-            imgsrc3={item.photos[3]}
-          />
+          <div className="flex w-screen h-80  font-Kanit" key={index}>
+            <div className="flex justify-center items-center w-4/12 ">
+              <img
+                className=" w-[450px] h-[270px] rounded-[50px]"
+                src={item.photos[0]}
+                alt="iconicLocation"
+              />
+            </div>
+            <div className="flex flex-col w-8/12 justify-center">
+              <h1 className="text-3xl">{item.title}</h1>
+              <p className="text-gray-400 line-clamp-1">{item.description}</p>
+              <a
+                className="inline  w-12 underline  text-blue-500"
+                href={item.url}
+                target="_blank"
+              >
+                อ่านต่อ
+              </a>
+              <div className="flex">
+                <p className="text-gray-400 mr-1">หมวด</p>
+                <div className="text-gray-400">
+                  {item.tags.map((item, index) => {
+                    return (
+                      <button
+                        key={index}
+                        className="mr-1"
+                        onClick={() => {
+                          handleInput(item);
+                        }}
+                      >
+                        {item}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="flex justify-between items-center h-[150px] w-[350px]">
+                <img
+                  className="w-[100px] h-[100px] rounded-lg"
+                  src={item.photos[1]}
+                  alt="Location"
+                />
+                <img
+                  className="w-[100px] h-[100px] rounded-lg"
+                  src={item.photos[2]}
+                  alt="Location"
+                />
+                <img
+                  className="w-[100px] h-[100px] rounded-lg"
+                  src={item.photos[3]}
+                  alt="Location"
+                />
+              </div>
+            </div>
+          </div>
         );
       })}
-      <TravelDetail />
     </div>
   );
 }
 
 export default TravelSearch;
-/*
-src={item.photos[0]}
-            title={item.title}
-            description={item.description}
-            tags={item.tags}
-            imgsrc={item.photos[1]}*/
-
-/*
-{locationDetail.map((item, index) => {
-        return (
-          <TravelDetail
-            key={index}
-            src={item.photos[0]}
-            title={item.title}
-            description={item.description}
-            url={item.url}
-            tags={item.tags}
-            imgsrc1={item.photos[1]}
-            imgsrc2={item.photos[2]}
-            imgsrc3={item.photos[3]}
-          />
-        );
-      })}
-
-*/
