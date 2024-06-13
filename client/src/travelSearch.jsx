@@ -4,6 +4,7 @@ import axios from "axios";
 function TravelSearch() {
   const [locationDetail, setLocationDetail] = useState([]);
   const [search, setSearch] = useState("");
+  const [link, setLink] = useState("");
   let inputMessage = search;
 
   const getLocationDetail = async () => {
@@ -15,25 +16,41 @@ function TravelSearch() {
   };
 
   const handleInput = (search) => {
-    inputMessage += search + " ";
-    setSearch(inputMessage);
+    if (!inputMessage.includes(search)) {
+      inputMessage += search + " ";
+      setSearch(inputMessage);
+    }
   };
 
+  const handleLink = async (item) => {
+    const result = await navigator.clipboard.writeText(item);
+    setLink(result);
+    alert("Copied to clipboard!");
+  };
   useEffect(() => {
     getLocationDetail();
   }, [search]);
   return (
     <div>
-      <div className=" flex justify-center font-Kanit  items-center h-[50px]">
-        <input
-          className="placeholder: text-center w-[1200px] border-b border-gray-400"
-          type="text"
-          placeholder="หาที่เที่ยวแล้วไปกัน ..."
-          value={search}
-          onChange={(event) => {
-            setSearch(event.target.value);
+      <div className="flex justify-center">
+        <div className=" flex justify-center font-Kanit  items-center h-[50px]">
+          <input
+            className="placeholder: text-center w-[1200px] border-b border-gray-400"
+            type="text"
+            placeholder="หาที่เที่ยวแล้วไปกัน ..."
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+            }}
+          />
+        </div>
+        <button
+          onClick={() => {
+            setSearch("");
           }}
-        />
+        >
+          clear
+        </button>
       </div>
       {locationDetail.map((item, index) => {
         return (
@@ -62,7 +79,7 @@ function TravelSearch() {
                     return (
                       <button
                         key={index}
-                        className="mr-1"
+                        className="mr-1 underline"
                         onClick={() => {
                           handleInput(item);
                         }}
@@ -73,22 +90,37 @@ function TravelSearch() {
                   })}
                 </div>
               </div>
-              <div className="flex justify-between items-center h-[150px] w-[350px]">
-                <img
-                  className="w-[100px] h-[100px] rounded-lg"
-                  src={item.photos[1]}
-                  alt="Location"
-                />
-                <img
-                  className="w-[100px] h-[100px] rounded-lg"
-                  src={item.photos[2]}
-                  alt="Location"
-                />
-                <img
-                  className="w-[100px] h-[100px] rounded-lg"
-                  src={item.photos[3]}
-                  alt="Location"
-                />
+              <div className="flex justify-between w-[900px]">
+                <div className="flex justify-between items-center h-[150px] w-[350px]">
+                  <img
+                    className="w-[100px] h-[100px] rounded-lg"
+                    src={item.photos[1]}
+                    alt="Location"
+                  />
+                  <img
+                    className="w-[100px] h-[100px] rounded-lg"
+                    src={item.photos[2]}
+                    alt="Location"
+                  />
+                  <img
+                    className="w-[100px] h-[100px] rounded-lg"
+                    src={item.photos[3]}
+                    alt="Location"
+                  />
+                </div>
+                <div>
+                  <button
+                    onClick={() => {
+                      handleLink(item.url);
+                    }}
+                  >
+                    <img
+                      className="w-[50px] h-[50px] relative top-[70px]"
+                      src="https://cdn-icons-png.flaticon.com/512/10016/10016975.png"
+                      alt="Icon"
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
